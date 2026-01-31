@@ -50,15 +50,15 @@
 
         #loading { text-align: center; padding: 60px 20px; color: var(--azul-neon); font-size: 16px; font-weight: bold; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; padding: 0 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; padding: 0 12px; justify-items: center; }
 
-        .card { position: relative; background: var(--tarjeta); padding: 10px 8px; border-radius: 14px; text-align: center; border: 1px solid var(--borde); transition: all 0.35s ease; cursor: pointer; }
+        .card { position: relative; background: var(--tarjeta); padding: 10px 8px; border-radius: 14px; text-align: center; border: 1px solid var(--borde); transition: all 0.35s ease; cursor: pointer; width: 100%; max-width: 140px; }
 
         .card:hover { transform: translateY(-6px) scale(1.03); border-color: var(--magenta-neon); }
 
         .card img { width: 48px; height: 48px; margin-bottom: 6px; border-radius: 50%; object-fit: contain; }
 
-        .card span { font-size: 10px; font-weight: 700; line-height: 1.2; display: block; }
+        .card span { font-size: 10px; font-weight: 700; line-height: 1.2; display: block; word-break: break-word; }
 
         .live-badge { position: absolute; top: 4px; right: 4px; background: var(--live); color: white; font-size: 7px; font-weight: bold; padding: 2px 5px; border-radius: 8px; box-shadow: 0 0 8px var(--live); animation: blink 1.4s infinite; }
 
@@ -92,6 +92,7 @@
         <div class="list-btn" onclick="loadXML_Ev2(this)">CANALES PRE</div>
         <div class="list-btn" onclick="loadXML_Ev3(this)">EVENTOS PRE</div>
         <div class="list-btn" onclick="loadXML_Ev4(this)">PRE + VPN</div>
+        <div class="list-btn" onclick="loadAgenda(this)">+ EVENTOS</div>
     </div>
 
     <div class="controls-row">
@@ -119,6 +120,7 @@
     const XML_EV2 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_canales_DEPORTE-LIBRE.FANS.xml';
     const XML_EV3 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/eventos_livetv_sx_con_reproductores.xml';
     const XML_EV4 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_sportsonlineci.xml';
+    const AGENDA_URL = 'https://agenda-navy-six.vercel.app/index.html';
     const LOGO = 'https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png';
 
     let channels = [];
@@ -157,9 +159,9 @@
         const list = document.getElementById('channel-list');
         list.style.display = 'grid';
         list.innerHTML = channels.map((c, i) => {
-            const isLive = isLiveFromName(c.name); // Aplicar a Acex y Pre+VPN
+            const isLive = isLiveFromName(c.name);
             return `
-                <div class="card" onclick="play(${i})">
+                <div class="card" onclick="play(${i}, '${c.type || ''}')">
                     ${isLive ? '<span class="live-badge">LIVE</span>' : ''}
                     <img src="${LOGO}">
                     <span>${c.name}</span>
@@ -197,14 +199,13 @@
                 if (link) channels.push({ name, link, type: 'web' });
             }); 
             render(); 
-        }).catch(err => { console.error('Error Ev2:', err); document.getElementById('loading').innerHTML = 'ERROR EN CANALES PRE'; }); 
+        }).catch(err => { console.error('Error Ev2:', err); }); 
     }
 
     function loadXML_Ev3(el) { 
         setActive(el); channels = []; 
         fetch(XML_EV3).then(r => r.text()).then(t => { 
             const x = new DOMParser().parseFromString(t, "text/xml"); 
-            // Más tolerante: buscar <evento> o cualquier tag que parezca evento
             const eventos = x.querySelectorAll('evento, event, item, programa');
             eventos.forEach(ev => { 
                 try {
@@ -217,19 +218,13 @@
                     const urlEl = stream.querySelector('url, link, enlace, stream-url');
                     const link = urlEl?.textContent?.trim() || stream.textContent?.trim();
                     
-                    if (link && link.startsWith('http') || link.includes('acestream')) {
+                    if (link && (link.startsWith('http') || link.includes('acestream'))) {
                         channels.push({ name: nombre, link, type: 'web' });
                     }
                 } catch (e) { console.warn('Error parseando evento:', e); }
             }); 
-            if (channels.length === 0) {
-                document.getElementById('loading').innerHTML = 'No se encontraron eventos válidos';
-            }
             render(); 
-        }).catch(err => { 
-            console.error('Error Ev3:', err); 
-            document.getElementById('loading').innerHTML = 'ERROR AL CARGAR EVENTOS PRE'; 
-        }); 
+        }).catch(err => { console.error('Error Ev3:', err); }); 
     }
 
     function loadXML_Ev4(el) { 
@@ -246,24 +241,71 @@
                 }
             } 
             render(); 
-        }).catch(err => { console.error('Error Ev4:', err); document.getElementById('loading').innerHTML = 'ERROR EN PRE + VPN'; }); 
+        }).catch(err => { console.error('Error Ev4:', err); }); 
     }
 
-    function play(i) {
+    function loadAgenda(el) {
+        setActive(el);
+        channels = [];
+        document.getElementById('loading').innerHTML = 'CARGANDO AGENDA...';
+        document.getElementById('channel-list').style.display = 'none';
+
+        fetch(AGENDA_URL)
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+                const rows = doc.querySelectorAll('table tr');
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 4) {
+                        const region = cells[0]?.textContent.trim() || '';
+                        const comp = cells[1]?.textContent.trim() || '';
+                        const time = cells[2]?.textContent.trim() || '';
+                        const matchLink = cells[3]?.querySelector('a');
+                        const matchName = matchLink?.textContent.trim() || '';
+                        const link = matchLink?.href || '';
+
+                        if (matchName && link) {
+                            const fullName = `${matchName} (${comp} - ${time})`.trim();
+                            const fullLink = link.startsWith('http') ? link : AGENDA_URL.replace(/\/index\.html$/, '') + link;
+                            channels.push({ name: fullName, link: fullLink, type: 'agenda' });
+                        }
+                    }
+                });
+
+                render();
+            })
+            .catch(err => {
+                console.error('Error cargando agenda:', err);
+                document.getElementById('loading').innerHTML = 'ERROR AL CARGAR AGENDA';
+            });
+    }
+
+    function play(i, type = '') {
         const c = channels[i];
         let url = c.link?.trim() || '';
-        
+
+        // Para + EVENTOS (agenda) → siempre abrir en nueva pestaña
+        if (type === 'agenda') {
+            window.open(url, '_blank');
+            return;
+        }
+
+        // Para el resto (streams) → iframe o acestream
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
             let id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop().split('?')[0];
             url = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
         }
 
-        if (url.toLowerCase().includes('acestream://')) {
+        if (c.type === 'ace' || url.toLowerCase().includes('acestream://')) {
             window.location.href = url.includes('acestream://') ? url : 'acestream://' + url;
-        } else {
-            document.getElementById('video-iframe').src = url;
-            document.getElementById('player-modal').style.display = 'flex';
+            return;
         }
+
+        document.getElementById('video-iframe').src = url;
+        document.getElementById('player-modal').style.display = 'flex';
     }
 
     function closePlayer() {
@@ -275,7 +317,7 @@
         const q = document.getElementById('search').value.toLowerCase();
         const filtered = channels.filter(c => c.name.toLowerCase().includes(q));
         document.getElementById('channel-list').innerHTML = filtered.map((c, i) => `
-            <div class="card" onclick="play(${i})">
+            <div class="card" onclick="play(${i}, '${c.type || ''}')">
                 ${isLiveFromName(c.name) ? '<span class="live-badge">LIVE</span>' : ''}
                 <img src="${LOGO}">
                 <span>${c.name}</span>
