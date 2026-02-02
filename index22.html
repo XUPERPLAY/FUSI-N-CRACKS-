@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FUSIÓN CRACKS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --negro: #0a0a0f;
+            --azul-neon: #00f0ff;
+            --magenta-neon: #ff00aa;
+            --dorado: #ffd700;
+            --dorado-glow: rgba(255, 215, 0, 0.7);
+            --tarjeta: rgba(18, 18, 35, 0.92);
+            --borde: rgba(0, 240, 255, 0.25);
+            --rojo: #ff2d55;
+            --live: #ff2d55;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: linear-gradient(135deg, #0a0a0f 0%, #000428 50%, #0a0a0f 100%); color: #e0f7ff; font-family: 'Roboto', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+        .header { position: fixed; top: 0; left: 0; right: 0; background: rgba(5,5,15,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--azul-neon); padding: 8px 10px; padding-top: calc(8px + env(safe-area-inset-top)); z-index: 999; box-shadow: 0 2px 15px rgba(0,240,255,0.12); }
+
+        .header-top { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 3px; }
+
+        .logo { width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 0 8px var(--azul-neon)); }
+
+        .title-main { font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 700; background: linear-gradient(90deg, var(--azul-neon), var(--magenta-neon), var(--dorado)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1.2px; text-shadow: 0 0 10px rgba(0,240,255,0.5); }
+
+        .byline { font-size: 7.5px; color: #88ddff; opacity: 0.8; margin-top: 0; }
+
+        .download-buttons { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 3px 0; }
+
+        .list-btn { padding: 4px 9px; border-radius: 16px; font-size: 8.5px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--borde); background: rgba(0,240,255,0.06); color: #d0f8ff; transition: all 0.3s ease; }
+
+        .list-btn:hover { transform: scale(1.04); }
+        .list-btn.active { background: linear-gradient(135deg, var(--azul-neon), var(--magenta-neon)); color: #000; border: none; transform: scale(1.06); }
+
+        .controls-row { text-align: center; margin-top: 2px; }
+
+        #search { width: 130px; padding: 4px 9px; border-radius: 16px; border: 1px solid var(--borde); background: rgba(255,255,255,0.04); color: #e0f7ff; font-size: 10px; outline: none; }
+
+        #search:focus { border-color: var(--azul-neon); }
+
+        .main-content { padding-top: calc(130px + env(safe-area-inset-top)); padding-bottom: 70px; min-height: 100vh; }
+
+        #loading { text-align: center; padding: 60px 20px; color: var(--azul-neon); font-size: 16px; font-weight: bold; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; padding: 0 12px; }
+
+        .card { position: relative; background: var(--tarjeta); padding: 10px 8px; border-radius: 14px; text-align: center; border: 1px solid var(--borde); transition: all 0.35s ease; cursor: pointer; }
+
+        .card:hover { transform: translateY(-6px) scale(1.03); border-color: var(--magenta-neon); }
+
+        .card img { width: 48px; height: 48px; margin-bottom: 6px; border-radius: 50%; object-fit: contain; }
+
+        .card span { font-size: 10px; font-weight: 700; line-height: 1.2; display: block; }
+
+        .live-badge { position: absolute; top: 4px; right: 4px; background: var(--live); color: white; font-size: 7px; font-weight: bold; padding: 2px 5px; border-radius: 8px; box-shadow: 0 0 8px var(--live); animation: blink 1.4s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+        #player-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; justify-content: center; align-items: center; }
+
+        .modal-container { position: relative; width: 94%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000; border: 2px solid var(--azul-neon); border-radius: 10px; overflow: hidden; }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .close-mini-bottom { position: absolute; bottom: 10px; left: 10px; background: var(--rojo); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; }
+
+        footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 8px; font-size: 10px; color: var(--dorado); background: rgba(5,5,20,0.97); border-top: 1px solid var(--azul-neon); }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-top">
+        <img src="https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png" alt="Logo" class="logo">
+        <div style="text-align:center;">
+            <h1 class="title-main">FUSIÓN CRACKS</h1>
+            <div class="byline">@By PACO & @By D.D.M</div>
+        </div>
+    </div>
+
+    <div class="download-buttons">
+        <div id="btn-main" class="list-btn active" onclick="loadM3U(MAIN_M3U, true, this)">CANALES ACEX</div>
+        <div class="list-btn" onclick="loadM3U(EVENTS_M3U, true, this)">EVENTOS ACEX</div>
+        <div class="list-btn" onclick="loadXML_Ev2(this)">CANALES PRE</div>
+        <div class="list-btn" onclick="loadXML_Ev3(this)">EVENTOS PRE</div>
+        <div class="list-btn" onclick="loadXML_Ev4(this)">PRE + VPN</div>
+        <div class="list-btn" onclick="loadAgenda(this)">+ EVENTOS</div>
+    </div>
+
+    <div class="controls-row">
+        <input type="text" id="search" placeholder="BUSCAR CRACK..." onkeyup="filter()">
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="loading">CARGANDO CRACKS...</div>
+    <div id="channel-list" class="grid" style="display:none;"></div>
+</div>
+
+<div id="player-modal">
+    <div class="modal-container">
+        <button class="close-mini-bottom" onclick="closePlayer()">CERRAR</button>
+        <iframe id="video-iframe" src="" allowfullscreen allow="autoplay; encrypted-media" referrerpolicy="no-referrer"></iframe>
+    </div>
+</div>
+
+<footer>⚡ FUSIÓN CRACKS ⚡ • EL DEPORTE SIN LÍMITES • 2026</footer>
+
+<script>
+    const MAIN_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/refs/heads/main/Probando';
+    const EVENTS_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/main/eventos.m3u';
+    const XML_EV2 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_canales_DEPORTE-LIBRE.FANS.xml';
+    const XML_EV3 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/eventos_livetv_sx_con_reproductores.xml';
+    const XML_EV4 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_sportsonlineci.xml';
+    const AGENDA_URL = 'https://agenda-navy-six.vercel.app/index.html';
+    const LOGO = 'https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png';
+
+    let channels = [];
+    const now = new Date();
+
+    function isLiveFromName(name) {
+        const timeRegex = /(\d{1,2}:\d{2})(?:\s*[-\s~]\s*(\d{1,2}:\d{2}))?/i;
+        const match = name.match(timeRegex);
+        if (!match) return false;
+
+        const startStr = match[1];
+        const endStr = match[2] || null;
+
+        const [startH, startM] = startStr.split(':').map(Number);
+        const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startH, startM);
+
+        let endToday = null;
+        if (endStr) {
+            const [endH, endM] = endStr.split(':').map(Number);
+            endToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endH, endM);
+        }
+
+        const durationMs = endToday ? (endToday - startToday) : 3 * 60 * 60 * 1000;
+        const endTime = endToday || new Date(startToday.getTime() + durationMs);
+
+        return now >= startToday && now <= endTime;
+    }
+
+    function setActive(el) {
+        document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function render() {
+        document.getElementById('loading').style.display = 'none';
+        const list = document.getElementById('channel-list');
+        list.style.display = 'grid';
+        list.innerHTML = channels.map((c, i) => {
+            const isLive = isLiveFromName(c.name);
+            return `
+                <div class="card" onclick="play(${i})">
+                    ${isLive ? '<span class="live-badge">LIVE</span>' : ''}
+                    <img src="${LOGO}">
+                    <span>${c.name}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function loadM3U(u, f, el) { 
+        setActive(el); channels = []; 
+        fetch(u).then(r => r.text()).then(t => { 
+            const l = t.split('\n'); 
+            l.forEach((line, i) => { 
+                if (line.startsWith('#EXTINF:')) {
+                    const namePart = line.split(',').slice(1).join(',');
+                    const name = namePart.trim() || 'Canal';
+                    const link = l[i+1]?.trim() || '';
+                    channels.push({ name, link, type: f ? 'ace' : 'web' });
+                }
+            }); 
+            render(); 
+        }).catch(err => { 
+            console.error('Error M3U:', err); 
+            document.getElementById('loading').innerHTML = 'ERROR AL CARGAR LISTA'; 
+        }); 
+    }
+
+    function loadXML_Ev2(el) { 
+        setActive(el); channels = []; 
+        fetch(XML_EV2).then(r => r.text()).then(t => { 
+            const x = new DOMParser().parseFromString(t, "text/xml"); 
+            x.querySelectorAll('channel, canal').forEach(item => { 
+                const name = item.getAttribute('name') || item.getAttribute('nombre del canal') || 'Canal';
+                const link = item.querySelector('url')?.textContent?.trim();
+                if (link) channels.push({ name, link, type: 'web' });
+            }); 
+            render(); 
+        }).catch(err => { console.error('Error Ev2:', err); }); 
+    }
+
+    function loadXML_Ev3(el) { 
+        setActive(el); channels = []; 
+        fetch(XML_EV3).then(r => r.text()).then(t => { 
+            const x = new DOMParser().parseFromString(t, "text/xml"); 
+            const eventos = x.querySelectorAll('evento, event, item, programa');
+            eventos.forEach(ev => { 
+                try {
+                    const nombreEl = ev.querySelector('nombre, title, name, evento');
+                    const nombre = nombreEl?.textContent?.trim() || ev.getAttribute('nombre') || ev.getAttribute('name') || 'Evento sin nombre';
+                    
+                    const stream = ev.querySelector('stream, streams, enlace, url-container');
+                    if (!stream) return;
+                    
+                    const urlEl = stream.querySelector('url, link, enlace, stream-url');
+                    const link = urlEl?.textContent?.trim() || stream.textContent?.trim();
+                    
+                    if (link && (link.startsWith('http') || link.includes('acestream'))) {
+                        channels.push({ name: nombre, link, type: 'web' });
+                    }
+                } catch (e) { console.warn('Error parseando evento:', e); }
+            }); 
+            render(); 
+        }).catch(err => { console.error('Error Ev3:', err); }); 
+    }
+
+    function loadXML_Ev4(el) { 
+        setActive(el); channels = []; 
+        fetch(XML_EV4).then(r => r.text()).then(data => { 
+            const x = new DOMParser().parseFromString(data, "text/xml"); 
+            const tracks = x.getElementsByTagName("track");
+            for (let t of tracks) { 
+                let name = t.getElementsByTagName("title")[0]?.textContent?.trim() || 'Evento';
+                let urls = t.getElementsByTagName("url");
+                if (name && urls.length > 0) {
+                    const link = urls[0].textContent.trim();
+                    channels.push({ name, link, type: 'web' });
+                }
+            } 
+            render(); 
+        }).catch(err => { console.error('Error Ev4:', err); }); 
+    }
+
+    function loadAgenda(el) {
+        setActive(el);
+        channels = [];
+        document.getElementById('loading').innerHTML = 'CARGANDO AGENDA...';
+        document.getElementById('channel-list').style.display = 'none';
+
+        fetch(AGENDA_URL)
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+                const rows = doc.querySelectorAll('table tr');
+
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 4) {
+                        const region = cells[0]?.textContent.trim() || '';
+                        const comp = cells[1]?.textContent.trim() || '';
+                        const time = cells[2]?.textContent.trim() || '';
+                        const matchLink = cells[3]?.querySelector('a');
+                        const matchName = matchLink?.textContent.trim() || '';
+                        const link = matchLink?.href || '';
+
+                        if (matchName && link) {
+                            const fullName = `${matchName} (${comp} - ${time})`.trim();
+                            const fullLink = link.startsWith('http') ? link : AGENDA_URL.replace(/\/index\.html$/, '') + link;
+                            channels.push({ name: fullName, link: fullLink, type: 'agenda' });
+                        }
+                    }
+                });
+
+                render();
+            })
+            .catch(err => {
+                console.error('Error cargando agenda:', err);
+                document.getElementById('loading').innerHTML = 'ERROR AL CARGAR AGENDA';
+            });
+    }
+
+    function play(i) {
+        const c = channels[i];
+        let url = c.link?.trim() || '';
+        
+        // Para + EVENTOS (agenda) → abrir en nueva pestaña
+        if (c.type === 'agenda') {
+            window.open(url, '_blank');
+            return;
+        }
+
+        // Para el resto: iframe o acestream
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            let id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop().split('?')[0];
+            url = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
+        }
+
+        if (url.toLowerCase().includes('acestream://')) {
+            window.location.href = url.includes('acestream://') ? url : 'acestream://' + url;
+            return;
+        }
+
+        document.getElementById('video-iframe').src = url;
+        document.getElementById('player-modal').style.display = 'flex';
+    }
+
+    function closePlayer() {
+        document.getElementById('player-modal').style.display = 'none';
+        document.getElementById('video-iframe').src = '';
+    }
+
+    function filter() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = channels.filter(c => c.name.toLowerCase().includes(q));
+        document.getElementById('channel-list').innerHTML = filtered.map((c, i) => `
+            <div class="card" onclick="play(${i})">
+                ${isLiveFromName(c.name) ? '<span class="live-badge">LIVE</span>' : ''}
+                <img src="${LOGO}">
+                <span>${c.name}</span>
+            </div>
+        `).join('');
+    }
+
+    loadM3U(MAIN_M3U, true, document.getElementById('btn-main'));
+</script>
+</body>
+</html>
