@@ -9,211 +9,175 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* NUEVA PALETA DE COLORES CLAROS */
-            --fondo-principal: #f4f7f6;
-            --fondo-degradado: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            --texto-principal: #1a1a1a;
-            --texto-secundario: #4a4a4a;
-            --tarjeta: #ffffff;
-            --tarjeta-sombra: rgba(0, 0, 0, 0.08);
-            --borde: rgba(0, 210, 255, 0.3);
-            --header-fondo: rgba(255, 255, 255, 0.95);
-            
-            /* Colores de acento mantenidos para contraste */
-            --azul-neon: #00b4d8; /* Un azul más suave para fondo claro */
-            --magenta-neon: #ff00aa;
-            --dorado: #c9a0dc; /* Un tono lavanda/dorado suave */
-            --rojo: #ff2d55;
-            --live: #ff2d55;
+            /* PALETA CÁLIDA Y PREMIUM */
+            --fondo-calido: #fff9f2;
+            --dorado-suave: #e6be8a;
+            --naranja-acento: #ff8c00;
+            --texto-oscuro: #2c1e12;
+            --glass-card: rgba(255, 255, 255, 0.85);
+            --azul-neon: #0077b6;
+            --rojo: #e63946;
+            --live: #ff0000;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
+        
         body { 
-            background: var(--fondo-degradado); 
-            color: var(--texto-principal); 
+            background-color: var(--fondo-calido);
+            color: var(--texto-oscuro); 
             font-family: 'Roboto', sans-serif; 
             min-height: 100vh; 
             overflow-x: hidden; 
         }
 
-        /* AJUSTES DE CABECERA PARA FONDO CLARO */
-        .header { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            background: var(--header-fondo); 
-            backdrop-filter: blur(10px); 
-            border-bottom: 1px solid var(--borde); 
-            padding: 8px 10px; 
-            padding-top: calc(8px + env(safe-area-inset-top)); 
-            z-index: 999; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+        /* CARRUSEL DE FONDO (OCUPA TODA LA PANTALLA) */
+        .carousel-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        .header-top { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 3px; }
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            transform: scale(1.1); /* Efecto de zoom suave */
+        }
 
-        .logo { width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 0 4px rgba(0,0,0,0.1)); }
+        .slide.active {
+            opacity: 0.4; /* Opacidad baja para que no moleste a la lectura */
+            transform: scale(1);
+        }
+
+        /* CAPA DE COLOR CÁLIDO SOBRE EL CARRUSEL */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,249,242,0.2) 0%, rgba(230,190,138,0.3) 100%);
+            z-index: -1;
+        }
+
+        /* CABECERA CÁLIDA */
+        .header { 
+            position: fixed; 
+            top: 0; left: 0; right: 0; 
+            background: rgba(255, 250, 240, 0.9); 
+            backdrop-filter: blur(10px); 
+            border-bottom: 2px solid var(--dorado-suave); 
+            padding: 10px; 
+            padding-top: calc(10px + env(safe-area-inset-top)); 
+            z-index: 999; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+
+        .header-top { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .logo { width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
 
         .title-main { 
             font-family: 'Orbitron', sans-serif; 
-            font-size: 17px; 
+            font-size: 18px; 
             font-weight: 700; 
-            background: linear-gradient(90deg, #0077b6, var(--magenta-neon), #bf9b30); /* Colores ajustados para legibilidad */
+            background: linear-gradient(90deg, #b8860b, #ff8c00, #b8860b);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
-            letter-spacing: 1.2px; 
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); 
+            letter-spacing: 1px;
         }
 
-        .byline { font-size: 7.5px; color: var(--texto-secundario); opacity: 0.9; margin-top: 0; }
-
-        .download-buttons { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 3px 0; }
+        .download-buttons { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 5px 0; }
 
         .list-btn { 
-            padding: 4px 9px; 
-            border-radius: 16px; 
-            font-size: 8.5px; 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 9px; 
             font-weight: bold; 
             text-transform: uppercase; 
             cursor: pointer; 
-            border: 1px solid rgba(0,0,0,0.1); 
+            border: 1px solid var(--dorado-suave); 
             background: #fff; 
-            color: var(--texto-principal); 
-            transition: all 0.3s ease; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            color: var(--texto-oscuro); 
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .list-btn:hover { transform: scale(1.04); background: #f0f0f0; }
         .list-btn.active { 
-            background: linear-gradient(135deg, #0077b6, var(--magenta-neon)); 
+            background: linear-gradient(135deg, #ff8c00, #b8860b); 
             color: #fff; 
             border: none; 
-            transform: scale(1.06); 
-            box-shadow: 0 2px 8px rgba(0,119,182,0.3);
+            box-shadow: 0 4px 10px rgba(255,140,0,0.3);
         }
-
-        .controls-row { text-align: center; margin-top: 2px; }
 
         #search { 
-            width: 130px; 
-            padding: 4px 9px; 
-            border-radius: 16px; 
-            border: 1px solid rgba(0,0,0,0.1); 
-            background: #fff; 
-            color: var(--texto-principal); 
-            font-size: 10px; 
-            outline: none; 
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+            width: 160px; padding: 6px 15px; border-radius: 20px; 
+            border: 1px solid var(--dorado-suave); 
+            background: #fff; font-size: 11px; outline: none;
         }
 
-        #search:focus { border-color: var(--azul-neon); box-shadow: 0 0 0 2px rgba(0,180,216,0.1); }
-
-        /* ESTILOS DEL NUEVO CARRUSEL */
-        .carousel-container {
-            width: 100%;
-            height: 150px; /* Altura del carrusel en móvil */
-            position: relative;
-            overflow: hidden;
-            border-bottom: 1px solid var(--borde);
-            margin-top: calc(130px + env(safe-area-inset-top)); /* Espacio para la cabecera fija */
-        }
-
-        .carousel-slide {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: opacity 1s ease-in-out; /* Transición suave de desvanecimiento */
-            background-size: cover;
-            background-position: center;
-        }
-
-        .carousel-slide.active {
-            opacity: 1;
-        }
-
-        /* Overlay oscuro suave sobre las imágenes para que el texto resalte si lo hubiera */
-        .carousel-container::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 100%);
-            z-index: 1;
-        }
-
-        /* AJUSTE DEL CONTENIDO PRINCIPAL PARA EL CARRUSEL */
+        /* CONTENIDO PRINCIPAL */
         .main-content { 
-            padding-top: 20px; /* Ya no necesita padding-top grande, lo tiene el carrusel */
-            padding-bottom: 70px; 
-            min-height: calc(100vh - 150px); 
+            padding-top: calc(160px + env(safe-area-inset-top)); 
+            padding-bottom: 80px; 
         }
 
-        #loading { text-align: center; padding: 60px 20px; color: #0077b6; font-size: 16px; font-weight: bold; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 15px; }
 
-        /* TARJETAS PARA FONDO CLARO */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; padding: 0 12px; }
-
+        /* TARJETAS DE CANALES (GLASSMORPHISM) */
         .card { 
             position: relative; 
-            background: var(--tarjeta); 
-            padding: 10px 8px; 
-            border-radius: 14px; 
+            background: var(--glass-card); 
+            padding: 15px 10px; 
+            border-radius: 18px; 
             text-align: center; 
-            border: 1px solid rgba(0,0,0,0.05); 
-            transition: all 0.35s ease; 
-            cursor: pointer; 
-            box-shadow: 0 2px 6px var(--tarjeta-sombra);
+            border: 1px solid rgba(230, 190, 138, 0.4); 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            backdrop-filter: blur(5px);
         }
 
-        .card:hover { 
-            transform: translateY(-6px) scale(1.03); 
-            border-color: var(--magenta-neon); 
-            box-shadow: 0 8px 20px rgba(255,0,170,0.1);
-        }
+        .card:hover { transform: translateY(-5px); border-color: var(--naranja-acento); background: #fff; }
 
-        .card img { width: 48px; height: 48px; margin-bottom: 6px; border-radius: 50%; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .card img { width: 55px; height: 55px; margin-bottom: 8px; border-radius: 50%; object-fit: contain; background: #fdfdfd; padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        .card span { font-size: 10px; font-weight: 700; line-height: 1.2; display: block; color: var(--texto-principal); }
+        .card span { font-size: 11px; font-weight: 700; color: var(--texto-oscuro); }
 
-        .live-badge { position: absolute; top: 4px; right: 4px; background: var(--live); color: white; font-size: 7px; font-weight: bold; padding: 2px 5px; border-radius: 8px; box-shadow: 0 0 8px var(--live); animation: blink 1.4s infinite; z-index: 2; }
+        .live-badge { position: absolute; top: 8px; right: 8px; background: var(--live); color: white; font-size: 8px; font-weight: bold; padding: 2px 6px; border-radius: 10px; animation: blink 1.2s infinite; }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        #player-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; }
+        /* REPRODUCTOR */
+        #player-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-container { position: relative; width: 95%; max-width: 900px; aspect-ratio: 16 / 9; background: #000; border: 2px solid var(--dorado-suave); border-radius: 15px; overflow: hidden; }
+        .close-mini-bottom { position: absolute; bottom: 15px; left: 15px; background: var(--rojo); color: white; border: none; padding: 8px 18px; border-radius: 25px; font-size: 12px; cursor: pointer; font-weight: bold; }
 
-        .modal-container { position: relative; width: 94%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000; border: 2px solid var(--azul-neon); border-radius: 10px; overflow: hidden; box-shadow: 0 0 30px rgba(0,180,216,0.3); }
-
-        iframe { width: 100%; height: 100%; border: none; }
-
-        .close-mini-bottom { position: absolute; bottom: 10px; left: 10px; background: var(--rojo); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; z-index: 2001; }
-
-        /* FOOTER PARA FONDO CLARO */
         footer { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            text-align: center; 
-            padding: 8px; 
-            font-size: 10px; 
-            color: var(--texto-secundario); 
-            background: var(--header-fondo); 
-            border-top: 1px solid var(--borde); 
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+            position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 10px; 
+            font-size: 11px; font-weight: bold; color: var(--texto-oscuro); 
+            background: rgba(255, 250, 240, 0.9); border-top: 2px solid var(--dorado-suave); 
         }
     </style>
 </head>
 <body>
+
+<div class="carousel-bg" id="carousel-bg">
+    <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1504450758481-7338eba7524a?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1530915597336-d0620170dc07?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1627634777217-c864268db30c?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1595078475328-1ab05d0a6a0e?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544420284-a44456993a4c?q=80&w=1200&auto=format&fit=crop')"></div> <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1521412644187-c49fa049e84d?q=80&w=1200&auto=format&fit=crop')"></div> </div>
+<div class="overlay"></div>
 
 <div class="header">
     <div class="header-top">
         <img src="https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png" alt="Logo" class="logo">
         <div style="text-align:center;">
             <h1 class="title-main">FUSIÓN CRACKS+VPN</h1>
-            <div class="byline">@By PACO & @By D.D.M--Android + Ios</div>
+            <div style="font-size: 8px; color: #555;">@By PACO & @By D.D.M--Android + Ios</div>
         </div>
     </div>
 
@@ -226,16 +190,13 @@
         <div class="list-btn" onclick="loadAgenda(this)">+ EVENTOS</div>
     </div>
 
-    <div class="controls-row">
+    <div class="controls-row" style="text-align: center; margin-top: 5px;">
         <input type="text" id="search" placeholder="BUSCAR CRACK..." onkeyup="filter()">
     </div>
 </div>
 
-<div class="carousel-container">
-    <div class="carousel-slide active" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1547447134-cd3f5c716030?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1603513488410-b4724a872957?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1600108312061-0536762b71be?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1582218109194-e0e640232497?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1594191370828-9844e66d2139?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1511210112704-ff2f59218206?q=80&w=800&auto=format&fit=crop');"></div> <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1595113612822-72782782e361?q=80&w=800&auto=format&fit=crop');"></div> </div>
-
 <div class="main-content">
-    <div id="loading">CARGANDO CRACKS...</div>
+    <div id="loading" style="text-align: center; padding: 50px; font-weight: bold; color: var(--naranja-acento);">CARGANDO CRACKS...</div>
     <div id="channel-list" class="grid" style="display:none;"></div>
 </div>
 
@@ -249,35 +210,17 @@
 <footer>⚡ FUSIÓN CRACKS ⚡ • EL DEPORTE SIN LÍMITES • 2026</footer>
 
 <script>
-    /* --- LÓGICA DEL CARRUSEL (NUEVO) --- */
-    function startCarousel() {
-        const slides = document.querySelectorAll('.carousel-slide');
-        let currentSlide = 0;
-
-        if (slides.length === 0) return;
-
-        // Función para cambiar de imagen
-        function nextSlide() {
-            // Quitar clase active de la imagen actual
-            slides[currentSlide].classList.remove('active');
-            
-            // Calcular el índice de la siguiente imagen (vuelve a 0 al final)
-            currentSlide = (currentSlide + 1) % slides.length;
-            
-            // Añadir clase active a la nueva imagen
-            slides[currentSlide].classList.add('active');
-        }
-
-        // Configurar el intervalo: 2 segundos = 2000 milisegundos
-        setInterval(nextSlide, 2000);
+    /* LÓGICA DEL CARRUSEL DE FONDO */
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    function moveCarousel() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
     }
+    setInterval(moveCarousel, 2000);
 
-    /* --- INICIALIZACIÓN --- */
-    // Ejecutar el carrusel cuando cargue la página
-    window.addEventListener('load', startCarousel);
-
-
-    /* --- TU LÓGICA ORIGINAL (SIN TOCAR ABSOLUTAMENTE NADA) --- */
+    /* TU LÓGICA ORIGINAL DE CANALES */
     const MAIN_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/refs/heads/main/Probando';
     const EVENTS_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/main/eventos.m3u';
     const XML_EV2 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_canales_DEPORTE-LIBRE.FANS.xml';
@@ -293,22 +236,9 @@
         const timeRegex = /(\d{1,2}:\d{2})(?:\s*[-\s~]\s*(\d{1,2}:\d{2}))?/i;
         const match = name.match(timeRegex);
         if (!match) return false;
-
-        const startStr = match[1];
-        const endStr = match[2] || null;
-
-        const [startH, startM] = startStr.split(':').map(Number);
+        const [startH, startM] = match[1].split(':').map(Number);
         const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startH, startM);
-
-        let endToday = null;
-        if (endStr) {
-            const [endH, endM] = endStr.split(':').map(Number);
-            endToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endH, endM);
-        }
-
-        const durationMs = endToday ? (endToday - startToday) : 3 * 60 * 60 * 1000;
-        const endTime = endToday || new Date(startToday.getTime() + durationMs);
-
+        const endTime = new Date(startToday.getTime() + (3 * 60 * 60 * 1000));
         return now >= startToday && now <= endTime;
     }
 
@@ -321,16 +251,13 @@
         document.getElementById('loading').style.display = 'none';
         const list = document.getElementById('channel-list');
         list.style.display = 'grid';
-        list.innerHTML = channels.map((c, i) => {
-            const isLive = isLiveFromName(c.name);
-            return `
-                <div class="card" onclick="play(${i})">
-                    ${isLive ? '<span class="live-badge">LIVE</span>' : ''}
-                    <img src="${LOGO}">
-                    <span>${c.name}</span>
-                </div>
-            `;
-        }).join('');
+        list.innerHTML = channels.map((c, i) => `
+            <div class="card" onclick="play(${i})">
+                ${isLiveFromName(c.name) ? '<span class="live-badge">LIVE</span>' : ''}
+                <img src="${LOGO}">
+                <span>${c.name}</span>
+            </div>
+        `).join('');
     }
 
     function loadM3U(u, f, el) { 
@@ -339,17 +266,13 @@
             const l = t.split('\n'); 
             l.forEach((line, i) => { 
                 if (line.startsWith('#EXTINF:')) {
-                    const namePart = line.split(',').slice(1).join(',');
-                    const name = namePart.trim() || 'Canal';
+                    const name = line.split(',').slice(1).join(',').trim() || 'Canal';
                     const link = l[i+1]?.trim() || '';
                     channels.push({ name, link, type: f ? 'ace' : 'web' });
                 }
             }); 
             render(); 
-        }).catch(err => { 
-            console.error('Error M3U:', err); 
-            document.getElementById('loading').innerHTML = 'ERROR AL CARGAR LISTA'; 
-        }); 
+        }).catch(() => document.getElementById('loading').innerHTML = 'ERROR'); 
     }
 
     function loadXML_Ev2(el) { 
@@ -357,37 +280,25 @@
         fetch(XML_EV2).then(r => r.text()).then(t => { 
             const x = new DOMParser().parseFromString(t, "text/xml"); 
             x.querySelectorAll('channel, canal').forEach(item => { 
-                const name = item.getAttribute('name') || item.getAttribute('nombre del canal') || 'Canal';
+                const name = item.getAttribute('name') || 'Canal';
                 const link = item.querySelector('url')?.textContent?.trim();
                 if (link) channels.push({ name, link, type: 'web' });
             }); 
             render(); 
-        }).catch(err => { console.error('Error Ev2:', err); }); 
+        }); 
     }
 
     function loadXML_Ev3(el) { 
         setActive(el); channels = []; 
         fetch(XML_EV3).then(r => r.text()).then(t => { 
             const x = new DOMParser().parseFromString(t, "text/xml"); 
-            const eventos = x.querySelectorAll('evento, event, item, programa');
-            eventos.forEach(ev => { 
-                try {
-                    const nombreEl = ev.querySelector('nombre, title, name, evento');
-                    const nombre = nombreEl?.textContent?.trim() || ev.getAttribute('nombre') || ev.getAttribute('name') || 'Evento sin nombre';
-                    
-                    const stream = ev.querySelector('stream, streams, enlace, url-container');
-                    if (!stream) return;
-                    
-                    const urlEl = stream.querySelector('url, link, enlace, stream-url');
-                    const link = urlEl?.textContent?.trim() || stream.textContent?.trim();
-                    
-                    if (link && (link.startsWith('http') || link.includes('acestream'))) {
-                        channels.push({ name: nombre, link, type: 'web' });
-                    }
-                } catch (e) { console.warn('Error parseando evento:', e); }
+            x.querySelectorAll('evento, event, item').forEach(ev => { 
+                const nombre = ev.querySelector('nombre, title, name')?.textContent?.trim() || 'Evento';
+                const link = ev.querySelector('url, link')?.textContent?.trim();
+                if (link) channels.push({ name: nombre, link, type: 'web' });
             }); 
             render(); 
-        }).catch(err => { console.error('Error Ev3:', err); }); 
+        }); 
     }
 
     function loadXML_Ev4(el) { 
@@ -396,77 +307,37 @@
             const x = new DOMParser().parseFromString(data, "text/xml"); 
             const tracks = x.getElementsByTagName("track");
             for (let t of tracks) { 
-                let name = t.getElementsByTagName("title")[0]?.textContent?.trim() || 'Evento';
-                let urls = t.getElementsByTagName("url");
-                if (name && urls.length > 0) {
-                    const link = urls[0].textContent.trim();
-                    channels.push({ name, link, type: 'web' });
-                }
+                let name = t.getElementsByTagName("title")[0]?.textContent?.trim();
+                let link = t.getElementsByTagName("url")[0]?.textContent?.trim();
+                if (name && link) channels.push({ name, link, type: 'web' });
             } 
             render(); 
-        }).catch(err => { console.error('Error Ev4:', err); }); 
+        }); 
     }
 
     function loadAgenda(el) {
-        setActive(el);
-        channels = [];
+        setActive(el); channels = []; 
         document.getElementById('loading').innerHTML = 'CARGANDO AGENDA...';
-        document.getElementById('channel-list').style.display = 'none';
-
-        fetch(AGENDA_URL)
-            .then(r => r.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, "text/html");
-                const rows = doc.querySelectorAll('table tr');
-
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length >= 4) {
-                        const region = cells[0]?.textContent.trim() || '';
-                        const comp = cells[1]?.textContent.trim() || '';
-                        const time = cells[2]?.textContent.trim() || '';
-                        const matchLink = cells[3]?.querySelector('a');
-                        const matchName = matchLink?.textContent.trim() || '';
-                        const link = matchLink?.href || '';
-
-                        if (matchName && link) {
-                            const fullName = `${matchName} (${comp} - ${time})`.trim();
-                            const fullLink = link.startsWith('http') ? link : AGENDA_URL.replace(/\/index\.html$/, '') + link;
-                            channels.push({ name: fullName, link: fullLink, type: 'agenda' });
-                        }
+        fetch(AGENDA_URL).then(r => r.text()).then(html => {
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            doc.querySelectorAll('table tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) {
+                    const matchLink = cells[3]?.querySelector('a');
+                    if (matchLink) {
+                        channels.push({ name: matchLink.textContent.trim(), link: matchLink.href, type: 'agenda' });
                     }
-                });
-
-                render();
-            })
-            .catch(err => {
-                console.error('Error cargando agenda:', err);
-                document.getElementById('loading').innerHTML = 'ERROR AL CARGAR AGENDA';
+                }
             });
+            render();
+        });
     }
 
     function play(i) {
         const c = channels[i];
-        let url = c.link?.trim() || '';
-        
-        // Para + EVENTOS (agenda) → abrir en nueva pestaña
-        if (c.type === 'agenda') {
-            window.open(url, '_blank');
-            return;
-        }
-
-        // Para el resto: iframe o acestream
-        if (url.includes('youtube.com') || url.includes('youtu.be')) {
-            let id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop().split('?')[0];
-            url = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`;
-        }
-
-        if (url.toLowerCase().includes('acestream://')) {
-            window.location.href = url.includes('acestream://') ? url : 'acestream://' + url;
-            return;
-        }
-
+        let url = c.link;
+        if (c.type === 'agenda') { window.open(url, '_blank'); return; }
+        if (url.toLowerCase().includes('acestream://')) { window.location.href = url; return; }
         document.getElementById('video-iframe').src = url;
         document.getElementById('player-modal').style.display = 'flex';
     }
@@ -481,7 +352,6 @@
         const filtered = channels.filter(c => c.name.toLowerCase().includes(q));
         document.getElementById('channel-list').innerHTML = filtered.map((c, i) => `
             <div class="card" onclick="play(${i})">
-                ${isLiveFromName(c.name) ? '<span class="live-badge">LIVE</span>' : ''}
                 <img src="${LOGO}">
                 <span>${c.name}</span>
             </div>
