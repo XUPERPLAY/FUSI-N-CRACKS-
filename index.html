@@ -3,316 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FUSIÓN CRACKS</title>
+    <title>FUSIÓN CRACKS - FUTURISTIC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* PALETA FUTURISTA VIBRANTE */
-            --fondo-oscuro: #0a0a0f;
-            --cian-neon: #00f0ff;
-            --magenta-neon: #ff00ff;
-            --texto-claro: #e0f7ff;
-            --tarjeta: rgba(20, 20, 30, 0.9);
-            --borde-futurista: rgba(0, 240, 255, 0.3);
-            --rojo-neon: #ff2d55;
-            --live: #ff00ff;
+            --neon-cian: #00f0ff;
+            --neon-magenta: #ff00ff;
+            --neon-amarillo: #fff000;
+            --fondo-noche: #05050a;
+            --cristal: rgba(20, 20, 35, 0.85);
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            background: var(--fondo-oscuro);
-            color: var(--texto-claro); 
-            font-family: 'Roboto', sans-serif; 
-            min-height: 100vh; 
+            background: var(--fondo-noche);
+            color: #fff; 
+            font-family: 'Rajdhani', sans-serif; 
+            overflow-x: hidden;
         }
 
-        /* CARRUSEL DE FONDO NÍTIDO */
+        /* FONDO DINÁMICO NÍTIDO */
         .carousel-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -2;
         }
-
         .slide {
             position: absolute;
             width: 100%; height: 100%;
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-            filter: brightness(0.5); /* Ajuste para nitidez sin saturar el fondo */
+            transition: opacity 1s ease-in-out;
+            filter: brightness(0.6) contrast(1.1);
         }
-
         .slide.active { opacity: 1; }
 
-        /* CABECERA FUTURISTA */
+        /* CABECERA MULTICOLOR */
         .header { 
             position: fixed; 
             top: 0; left: 0; right: 0; 
-            background: rgba(10, 10, 15, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--cian-neon); 
-            padding: 8px 10px; 
-            padding-top: calc(8px + env(safe-area-inset-top)); 
-            z-index: 999; 
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
+            background: rgba(5, 5, 15, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--neon-cian), var(--neon-magenta), var(--neon-amarillo)) 1;
+            padding: 10px; 
+            z-index: 1000; 
+            text-align: center;
         }
-
-        .header-top { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .logo { width: 28px; height: 28px; object-fit: contain; }
 
         .title-main { 
             font-family: 'Orbitron', sans-serif; 
-            font-size: 17px; 
-            font-weight: 700; 
-            background: linear-gradient(90deg, var(--cian-neon), var(--magenta-neon));
+            font-size: 20px; 
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #00f0ff, #ff00ff);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
         }
 
-        .download-buttons { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 5px 0; }
+        .download-buttons { 
+            display: flex; 
+            overflow-x: auto; 
+            gap: 8px; 
+            padding: 10px 0;
+            scrollbar-width: none;
+        }
+        .download-buttons::-webkit-scrollbar { display: none; }
 
         .list-btn { 
-            padding: 5px 10px; 
-            border-radius: 15px; 
-            font-size: 8.5px; 
-            font-weight: bold; 
+            flex: 0 0 auto;
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            font-size: 11px; 
+            font-weight: 700; 
             text-transform: uppercase; 
-            border: 1px solid var(--borde-futurista); 
-            background: #1a1a25; 
-            color: var(--texto-claro);
-            transition: all 0.3s ease;
+            border: 1px solid var(--neon-cian); 
+            background: transparent; 
+            color: var(--neon-cian);
+            box-shadow: inset 0 0 5px var(--neon-cian);
         }
 
         .list-btn.active { 
-            background: linear-gradient(90deg, var(--cian-neon), var(--magenta-neon)); 
+            background: var(--neon-cian); 
             color: #000; 
-            border: none;
-            box-shadow: 0 0 10px var(--cian-neon);
+            box-shadow: 0 0 15px var(--neon-cian);
         }
 
         #search { 
-            width: 140px; padding: 5px 12px; border-radius: 15px; 
-            border: 1px solid var(--borde-futurista); outline: none; font-size: 10px;
-            background: #1a1a25; color: var(--texto-claro);
+            width: 90%; 
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--neon-magenta);
+            color: #fff;
+            padding: 8px;
+            border-radius: 20px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
         }
 
-        #search:focus { border-color: var(--cian-neon); box-shadow: 0 0 10px var(--cian-neon); }
-
-        /* CUADRÍCULA DE CANALES - DISPOSICIÓN ORIGINAL */
-        .main-content { padding-top: 155px; padding-bottom: 70px; }
+        /* CUADRÍCULA DE CANALES ORIGINAL */
+        .main-content { padding-top: 170px; padding-bottom: 80px; }
 
         .grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
-            gap: 12px; 
-            padding: 0 12px; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            padding: 15px; 
         }
 
         .card { 
-            position: relative; 
-            background: var(--tarjeta); 
-            padding: 12px 8px; 
-            border-radius: 14px; 
+            background: var(--cristal); 
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 15px; 
+            padding: 15px;
             text-align: center; 
-            border: 1px solid var(--borde-futurista); 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
         }
-
-        .card:hover { transform: translateY(-3px); border-color: var(--cian-neon); box-shadow: 0 0 15px var(--cian-neon); }
+        .card:active { transform: scale(0.95); border-color: var(--neon-magenta); }
 
         .card img { 
-            width: 50px; 
-            height: 50px; 
-            margin-bottom: 6px; 
+            width: 60px; height: 60px; 
             border-radius: 50%; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 5px var(--cian-neon));
+            border: 2px solid var(--neon-cian);
+            padding: 2px;
+            margin-bottom: 10px;
         }
 
-        .card span { font-size: 10.5px; font-weight: 700; display: block; line-height: 1.2; color: var(--texto-claro); }
-
-        .live-badge { 
-            position: absolute; top: 5px; right: 5px; 
-            background: var(--live); color: #000; 
-            font-size: 7px; font-weight: bold; 
-            padding: 2px 5px; border-radius: 8px; 
-            box-shadow: 0 0 10px var(--live);
+        .card span { 
+            display: block; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #fff;
+            text-transform: uppercase;
         }
 
-        /* REPRODUCTOR PANTALLA COMPLETA MEJORADO */
+        /* EL REPRODUCTOR INTEGRADO (VENTANA FLOTANTE) */
         #player-modal { 
-            display: none; position: fixed; inset: 0; 
-            background: #000; z-index: 2000; 
-            flex-direction: column;
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            z-index: 2000; 
+            background: rgba(0,0,0,0.85);
+            align-items: center; 
+            justify-content: center;
+            padding: 20px;
         }
 
-        .modal-container { 
-            width: 100vw; 
-            height: 100vh; 
-            position: relative; 
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            background: #000;
+            border: 2px solid var(--neon-cian);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 30px var(--neon-cian);
+            position: relative;
+        }
+
+        .iframe-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
             background: #000;
         }
-        
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            display: block;
-        }
+
+        iframe { width: 100%; height: 100%; border: none; }
 
         .close-btn { 
-            position: absolute; top: 20px; right: 20px; 
-            background: rgba(255, 45, 85, 0.8); color: white; 
-            border: none; padding: 10px 20px; 
-            border-radius: 30px; font-weight: bold; z-index: 2001;
-            transition: all 0.3s ease;
+            width: 100%;
+            background: linear-gradient(90deg, #ff0055, #ff00ff);
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            font-weight: bold; 
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            cursor: pointer;
         }
 
-        .close-btn:hover { background: rgba(255, 45, 85, 1); box-shadow: 0 0 15px #ff2d55; }
-
         footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            text-align: center; padding: 8px; 
-            font-size: 10px; font-weight: bold;
-            background: rgba(10, 10, 15, 0.9);
-            border-top: 2px solid var(--cian-neon); 
-            color: var(--texto-claro);
+            position: fixed; bottom: 0; width: 100%;
+            background: rgba(5, 5, 15, 0.9);
+            border-top: 1px solid var(--neon-cian);
+            padding: 10px; text-align: center;
+            font-size: 11px; font-weight: bold; color: var(--neon-cian);
         }
     </style>
 </head>
 <body>
 
 <div class="carousel-bg">
-    <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1547447134-cd3f5c716030?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1530915597336-d0620170dc07?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1627634777217-c864268db30c?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1544420284-a44456993a4c?q=80&w=1200')"></div>
-    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1521412644187-c49fa049e84d?q=80&w=1200')"></div>
+    <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200')"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1200')"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1200')"></div>
 </div>
 
 <div class="header">
-    <div class="header-top">
-        <img src="https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png" alt="Logo" class="logo">
-        <h1 class="title-main">FUSIÓN CRACKS+VPN</h1>
-    </div>
+    <h1 class="title-main">FUSIÓN CRACKS+VPN</h1>
     <div class="download-buttons">
-        <div id="btn-main" class="list-btn active" onclick="loadM3U(MAIN_M3U, true, this)">CANALES ACEX</div>
-        <div class="list-btn" onclick="loadM3U(EVENTS_M3U, true, this)">EVENTOS ACEX</div>
-        <div class="list-btn" onclick="loadXML_Ev2(this)">CANALES PRE</div>
-        <div class="list-btn" onclick="loadXML_Ev3(this)">EVENTOS PRE</div>
-        <div class="list-btn" onclick="loadXML_Ev4(this)">PRE + VPN</div>
-        <div class="list-btn" onclick="loadAgenda(this)">+ EVENTOS</div>
+        <button id="btn-main" class="list-btn active" onclick="loadM3U(MAIN_M3U, this)">CANALES ACEX</button>
+        <button class="list-btn" onclick="loadM3U(EVENTS_M3U, this)">EVENTOS ACEX</button>
+        <button class="list-btn" onclick="loadXML(XML_EV2, this)">CANALES PRE</button>
+        <button class="list-btn" onclick="loadXML(XML_EV3, this)">EVENTOS PRE</button>
+        <button class="list-btn" onclick="loadXML(XML_EV4, this)">PRE + VPN</button>
     </div>
-    <div style="text-align: center;"><input type="text" id="search" placeholder="BUSCAR CRACK..." onkeyup="filter()"></div>
+    <input type="text" id="search" placeholder="--- BUSCAR CANAL ---" onkeyup="filter()">
 </div>
 
 <div class="main-content">
-    <div id="loading" style="text-align: center; font-weight: bold; color: var(--cian-neon);">CARGANDO...</div>
-    <div id="channel-list" class="grid" style="display:none;"></div>
+    <div id="channel-list" class="grid"></div>
 </div>
 
 <div id="player-modal">
-    <button class="close-btn" onclick="closePlayer()">CERRAR</button>
-    <div class="modal-container">
-        <iframe id="video-iframe" src="" allowfullscreen allow="autoplay" referrerpolicy="no-referrer"></iframe>
+    <div class="modal-content">
+        <div class="iframe-container">
+            <iframe id="video-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+        </div>
+        <button class="close-btn" onclick="closePlayer()">CERRAR REPRODUCTOR</button>
     </div>
 </div>
 
-<footer>⚡ FUSIÓN CRACKS ⚡ • 2026</footer>
+<footer>⚡ EL DEPORTE SIN LÍMITES • 2026 ⚡</footer>
 
 <script>
-    /* CARRUSEL CADA 2 SEGUNDOS NÍTIDO */
-    let current = 0;
+    let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
     setInterval(() => {
-        slides[current].classList.remove('active');
-        current = (current + 1) % slides.length;
-        slides[current].classList.add('active');
-    }, 2000);
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }, 3000);
 
-    /* LÓGICA DE CANALES (SIN CAMBIOS EN FUNCIONAMIENTO) */
     const MAIN_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/refs/heads/main/Probando';
     const EVENTS_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/main/eventos.m3u';
     const XML_EV2 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_canales_DEPORTE-LIBRE.FANS.xml';
     const XML_EV3 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/eventos_livetv_sx_con_reproductores.xml';
     const XML_EV4 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_sportsonlineci.xml';
-    const AGENDA_URL = 'https://agenda-navy-six.vercel.app/agenda_deportiva.html';
-    const LOGO = 'https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png';
+    const LOGO_DEFAULT = 'https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png';
 
     let channels = [];
-    const now = new Date();
 
-    function setActive(el) {
+    function loadM3U(url, btn) {
         document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function render() {
-        document.getElementById('loading').style.display = 'none';
-        const list = document.getElementById('channel-list');
-        list.style.display = 'grid';
-        list.innerHTML = channels.map((c, i) => `
-            <div class="card" onclick="play(${i})">
-                <img src="${LOGO}">
-                <span>${c.name}</span>
-            </div>
-        `).join('');
-    }
-
-    function loadM3U(u, f, el) { 
-        setActive(el); channels = []; 
-        fetch(u).then(r => r.text()).then(t => { 
-            t.split('\n').forEach((line, i, arr) => { 
-                if (line.startsWith('#EXTINF:')) {
-                    channels.push({ name: line.split(',')[1].trim(), link: arr[i+1].trim() });
+        btn.classList.add('active');
+        fetch(url).then(r => r.text()).then(data => {
+            channels = [];
+            const lines = data.split('\n');
+            for(let i=0; i<lines.length; i++) {
+                if(lines[i].includes('#EXTINF')) {
+                    const name = lines[i].split(',')[1] || "Canal";
+                    const link = lines[i+1]?.trim();
+                    if(link) channels.push({name, link});
                 }
-            }); 
-            render(); 
-        }); 
+            }
+            render();
+        });
     }
 
-    function loadXML_Ev2(el) { 
-        setActive(el); channels = []; 
-        fetch(XML_EV2).then(r => r.text()).then(t => { 
-            const x = new DOMParser().parseFromString(t, "text/xml"); 
-            x.querySelectorAll('channel, canal').forEach(item => { 
-                channels.push({ name: item.getAttribute('name'), link: item.querySelector('url')?.textContent });
-            }); 
-            render(); 
-        }); 
-    }
-
-    function loadXML_Ev3(el) { setActive(el); channels = []; fetch(XML_EV3).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); x.querySelectorAll('evento, event').forEach(ev => { channels.push({ name: ev.querySelector('nombre, title')?.textContent, link: ev.querySelector('url, link')?.textContent }); }); render(); }); }
-    function loadXML_Ev4(el) { setActive(el); channels = []; fetch(XML_EV4).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); Array.from(x.getElementsByTagName("track")).forEach(t => { channels.push({ name: t.getElementsByTagName("title")[0]?.textContent, link: t.getElementsByTagName("url")[0]?.textContent }); }); render(); }); }
-
-    function loadAgenda(el) {
-        setActive(el); channels = []; 
-        fetch(AGENDA_URL).then(r => r.text()).then(html => {
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            doc.querySelectorAll('table tr').forEach(row => {
-                const link = row.querySelector('td a');
-                if (link) channels.push({ name: link.textContent, link: link.href, type: 'agenda' });
+    function loadXML(url, btn) {
+        document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        fetch(url).then(r => r.text()).then(data => {
+            channels = [];
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(data, "text/xml");
+            const items = xml.querySelectorAll('channel, canal, item, track');
+            items.forEach(item => {
+                const name = item.getAttribute('name') || item.querySelector('title')?.textContent || "Evento";
+                const link = item.querySelector('url, link')?.textContent;
+                if(link) channels.push({name, link});
             });
             render();
         });
     }
 
-    function play(i) {
-        const c = channels[i];
-        if (c.type === 'agenda') { window.open(c.link, '_blank'); return; }
-        if (c.link.includes('acestream://')) { window.location.href = c.link; return; }
-        document.getElementById('video-iframe').src = c.link;
+    function render(filterList = null) {
+        const list = document.getElementById('channel-list');
+        const data = filterList || channels;
+        list.innerHTML = data.map((c, i) => `
+            <div class="card" onclick="play('${c.link}')">
+                <img src="${LOGO_DEFAULT}">
+                <span>${c.name}</span>
+            </div>
+        `).join('');
+    }
+
+    function filter() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const filtered = channels.filter(c => c.name.toLowerCase().includes(query));
+        render(filtered);
+    }
+
+    function play(link) {
+        if (link.includes('acestream://')) {
+            window.location.href = link;
+            return;
+        }
+        document.getElementById('video-iframe').src = link;
         document.getElementById('player-modal').style.display = 'flex';
     }
 
@@ -321,18 +314,8 @@
         document.getElementById('video-iframe').src = '';
     }
 
-    function filter() {
-        const q = document.getElementById('search').value.toLowerCase();
-        const filtered = channels.filter(c => c.name.toLowerCase().includes(q));
-        document.getElementById('channel-list').innerHTML = filtered.map((c, i) => `
-            <div class="card" onclick="play(${i})">
-                <img src="${LOGO}">
-                <span>${c.name}</span>
-            </div>
-        `).join('');
-    }
-
-    loadM3U(MAIN_M3U, true, document.getElementById('btn-main'));
+    // Carga inicial
+    loadM3U(MAIN_M3U, document.getElementById('btn-main'));
 </script>
 </body>
 </html>
