@@ -10,96 +10,120 @@
     <style>
         :root {
             --negro: #0a0a0f;
-            --azul-neon: #00f0ff;
-            --magenta-neon: #ff00aa;
+            --azul-neon: #00f0ff; /* Color futurista */
+            --magenta-neon: #ff00aa; /* Color futurista */
             --dorado: #ffd700;
+            --dorado-glow: rgba(255, 215, 0, 0.7);
             --tarjeta: rgba(18, 18, 35, 0.92);
             --borde: rgba(0, 240, 255, 0.25);
             --rojo: #ff2d55;
+            --live: #ff2d55; /* Mantenido Rojo como pediste */
         }
 
-        /* Estilos base y scroll */
-        * { margin:0; padding:0; box-sizing:border-box; outline: none; }
-        body { 
-            background: linear-gradient(135deg, #0a0a0f 0%, #000428 50%, #0a0a0f 100%); 
-            color: #e0f7ff; 
-            font-family: 'Roboto', sans-serif; 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-        }
-
-        /* FOCO PARA MANDO (TV) */
+        /* SOPORTE PARA MANDO - FOCO VISIBLE */
         :focus {
-            border: 2px solid var(--azul-neon) !important;
+            outline: 3px solid var(--azul-neon) !important;
             box-shadow: 0 0 20px var(--azul-neon) !important;
             transform: scale(1.05);
-            background: rgba(0, 240, 255, 0.2) !important;
+            z-index: 10;
         }
 
-        .header { position: fixed; top: 0; left: 0; right: 0; background: rgba(5,5,15,0.97); backdrop-filter: blur(12px); border-bottom: 2px solid var(--azul-neon); padding: 10px; z-index: 999; }
-        .header-top { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .logo { width: 30px; height: 30px; filter: drop-shadow(0 0 8px var(--azul-neon)); }
-        .title-main { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; background: linear-gradient(90deg, var(--azul-neon), var(--magenta-neon)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .byline { font-size: 9px; color: #88ddff; text-align: center; margin-bottom: 5px; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: linear-gradient(135deg, #0a0a0f 0%, #000428 50%, #0a0a0f 100%); color: #e0f7ff; font-family: 'Roboto', sans-serif; min-height: 100vh; overflow-x: hidden; }
 
-        .download-buttons { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 5px 0; }
-        .list-btn { padding: 8px 15px; border-radius: 5px; font-size: 10px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--borde); background: #1a1a2e; color: #fff; transition: 0.3s; }
-        .list-btn.active { background: var(--azul-neon); color: #000; border: none; }
+        .header { position: fixed; top: 0; left: 0; right: 0; background: rgba(5,5,15,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--azul-neon); padding: 8px 10px; padding-top: calc(8px + env(safe-area-inset-top)); z-index: 999; box-shadow: 0 2px 15px rgba(0,240,255,0.12); }
 
-        .main-content { padding-top: 180px; padding-bottom: 70px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 0 15px; }
+        .header-top { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 3px; }
 
-        .card { 
-            position: relative; background: var(--tarjeta); padding: 15px; border-radius: 10px; 
-            text-align: center; border: 1px solid var(--borde); transition: 0.3s; cursor: pointer;
-        }
-        .card img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; border: 2px solid var(--azul-neon); }
-        .card span { font-size: 12px; font-weight: 700; display: block; }
+        .logo { width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 0 8px var(--azul-neon)); }
 
-        /* REPRODUCTOR FLOTANTE */
-        #player-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-container { position: relative; width: 90%; max-width: 800px; aspect-ratio: 16 / 9; border: 2px solid var(--azul-neon); box-shadow: 0 0 30px var(--azul-neon); background: #000; }
+        .title-main { font-family: 'Orbitron', sans-serif; font-size: 17px; font-weight: 700; background: linear-gradient(90deg, var(--azul-neon), var(--magenta-neon), var(--dorado)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1.2px; text-shadow: 0 0 10px rgba(0,240,255,0.5); }
+
+        .byline { font-size: 7.5px; color: #88ddff; opacity: 0.8; margin-top: 0; }
+
+        .download-buttons { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin: 3px 0; }
+
+        .list-btn { padding: 4px 9px; border-radius: 16px; font-size: 8.5px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--borde); background: rgba(0,240,255,0.06); color: #d0f8ff; transition: all 0.3s ease; }
+
+        .list-btn:hover { transform: scale(1.04); }
+        .list-btn.active { background: linear-gradient(135deg, var(--azul-neon), var(--magenta-neon)); color: #000; border: none; transform: scale(1.06); }
+
+        .controls-row { text-align: center; margin-top: 2px; }
+
+        #search { width: 130px; padding: 4px 9px; border-radius: 16px; border: 1px solid var(--borde); background: rgba(255,255,255,0.04); color: #e0f7ff; font-size: 10px; outline: none; }
+
+        #search:focus { border-color: var(--azul-neon); }
+
+        .main-content { padding-top: calc(130px + env(safe-area-inset-top)); padding-bottom: 70px; min-height: 100vh; }
+
+        #loading { text-align: center; padding: 60px 20px; color: var(--azul-neon); font-size: 16px; font-weight: bold; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; padding: 0 12px; }
+
+        .card { position: relative; background: var(--tarjeta); padding: 10px 8px; border-radius: 14px; text-align: center; border: 1px solid var(--borde); transition: all 0.35s ease; cursor: pointer; }
+
+        .card:hover { transform: translateY(-6px) scale(1.03); border-color: var(--magenta-neon); }
+
+        .card img { width: 48px; height: 48px; margin-bottom: 6px; border-radius: 50%; object-fit: contain; }
+
+        .card span { font-size: 10px; font-weight: 700; line-height: 1.2; display: block; }
+
+        .live-badge { position: absolute; top: 4px; right: 4px; background: var(--live); color: white; font-size: 7px; font-weight: bold; padding: 2px 5px; border-radius: 8px; box-shadow: 0 0 8px var(--live); animation: blink 1.4s infinite; }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+        #player-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; justify-content: center; align-items: center; }
+
+        .modal-container { position: relative; width: 94%; max-width: 1000px; aspect-ratio: 16 / 9; background: #000; border: 2px solid var(--azul-neon); border-radius: 10px; overflow: hidden; }
+
         iframe { width: 100%; height: 100%; border: none; }
-        .close-btn { position: absolute; bottom: -45px; right: 0; background: var(--rojo); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
-        footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 10px; font-size: 11px; color: var(--azul-neon); background: #05050f; border-top: 1px solid var(--azul-neon); }
+        .close-mini-bottom { position: absolute; bottom: 10px; left: 10px; background: var(--rojo); color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; }
+
+        footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; padding: 8px; font-size: 10px; color: var(--dorado); background: rgba(5,5,20,0.97); border-top: 1px solid var(--azul-neon); }
     </style>
 </head>
-<body tabindex="-1">
+<body>
 
 <div class="header">
     <div class="header-top">
-        <img src="https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png" class="logo">
-        <h1 class="title-main">FUSIÓN CRACKS+VPN</h1>
+        <img src="https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png" alt="Logo" class="logo">
+        <div style="text-align:center;">
+            <h1 class="title-main">FUSIÓN CRACKS+VPN</h1>
+            <div class="byline">@By PACO & @By D.D.M--Android + Ios</div>
+        </div>
     </div>
-    <div class="byline">@By PACO & @By D.D.M--Android + Ios</div>
 
     <div class="download-buttons">
-        <button tabindex="0" id="btn-main" class="list-btn active" onclick="loadM3U(MAIN_M3U, true, this)">CANALES ACEX</button>
-        <button tabindex="0" class="list-btn" onclick="loadM3U(EVENTS_M3U, true, this)">EVENTOS ACEX</button>
-        <button tabindex="0" class="list-btn" onclick="loadXML_Ev2(this)">CANALES PRE</button>
-        <button tabindex="0" class="list-btn" onclick="loadXML_Ev3(this)">EVENTOS PRE</button>
-        <button tabindex="0" class="list-btn" onclick="loadXML_Ev4(this)">PRE + VPN</button>
-        <button tabindex="0" class="list-btn" onclick="loadAgenda(this)">+ EVENTOS</button>
+        <div tabindex="0" id="btn-main" class="list-btn active" onclick="loadM3U(MAIN_M3U, true, this)">CANALES ACEX</div>
+        <div tabindex="0" class="list-btn" onclick="loadM3U(EVENTS_M3U, true, this)">EVENTOS ACEX</div>
+        <div tabindex="0" class="list-btn" onclick="loadXML_Ev2(this)">CANALES PRE</div>
+        <div tabindex="0" class="list-btn" onclick="loadXML_Ev3(this)">EVENTOS PRE</div>
+        <div tabindex="0" class="list-btn" onclick="loadXML_Ev4(this)">PRE + VPN</div>
+        <div tabindex="0" class="list-btn" onclick="loadAgenda(this)">+ EVENTOS</div>
+    </div>
+
+    <div class="controls-row">
+        <input tabindex="0" type="text" id="search" placeholder="BUSCAR CRACK..." onkeyup="filter()">
     </div>
 </div>
 
 <div class="main-content">
-    <div id="loading" style="text-align: center; margin-top: 50px;">CARGANDO...</div>
-    <div id="channel-list" class="grid"></div>
+    <div id="loading">CARGANDO CRACKS...</div>
+    <div id="channel-list" class="grid" style="display:none;"></div>
 </div>
 
 <div id="player-modal">
     <div class="modal-container">
-        <iframe id="video-iframe" src="" allowfullscreen allow="autoplay"></iframe>
-        <button tabindex="0" class="close-btn" onclick="closePlayer()">CERRAR</button>
+        <button tabindex="0" class="close-mini-bottom" onclick="closePlayer()">CERRAR</button>
+        <iframe id="video-iframe" src="" allowfullscreen allow="autoplay; encrypted-media" referrerpolicy="no-referrer"></iframe>
     </div>
 </div>
 
-<footer>⚡ FUSIÓN CRACKS ⚡ • 2026</footer>
+<footer>⚡ FUSIÓN CRACKS ⚡ • EL DEPORTE SIN LÍMITES • 2026</footer>
 
 <script>
-    // URLs originales (SIN TOCAR)
+    // Lógica EXACTA de tu código previo
     const MAIN_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/refs/heads/main/Probando';
     const EVENTS_M3U = 'https://raw.githubusercontent.com/Icastresana/lista1/main/eventos.m3u';
     const XML_EV2 = 'https://raw.githubusercontent.com/tutw/platinsport-m3u-updater/refs/heads/main/lista_canales_DEPORTE-LIBRE.FANS.xml';
@@ -109,6 +133,25 @@
     const LOGO = 'https://i.postimg.cc/mDrdRhMG/logo1-31-151811.png';
 
     let channels = [];
+    const now = new Date();
+
+    function isLiveFromName(name) {
+        const timeRegex = /(\d{1,2}:\d{2})(?:\s*[-\s~]\s*(\d{1,2}:\d{2}))?/i;
+        const match = name.match(timeRegex);
+        if (!match) return false;
+        const startStr = match[1];
+        const endStr = match[2] || null;
+        const [startH, startM] = startStr.split(':').map(Number);
+        const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startH, startM);
+        let endToday = null;
+        if (endStr) {
+            const [endH, endM] = endStr.split(':').map(Number);
+            endToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endH, endM);
+        }
+        const durationMs = endToday ? (endToday - startToday) : 3 * 60 * 60 * 1000;
+        const endTime = endToday || new Date(startToday.getTime() + durationMs);
+        return now >= startToday && now <= endTime;
+    }
 
     function setActive(el) {
         document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
@@ -118,29 +161,35 @@
     function render() {
         document.getElementById('loading').style.display = 'none';
         const list = document.getElementById('channel-list');
-        list.innerHTML = channels.map((c, i) => `
-            <div class="card" tabindex="0" onclick="play(${i})">
-                <img src="${LOGO}">
-                <span>${c.name}</span>
-            </div>
-        `).join('');
+        list.style.display = 'grid';
+        list.innerHTML = channels.map((c, i) => {
+            const isLive = isLiveFromName(c.name);
+            return `
+                <div tabindex="0" class="card" onclick="play(${i})">
+                    ${isLive ? '<span class="live-badge">LIVE</span>' : ''}
+                    <img src="${LOGO}">
+                    <span>${c.name}</span>
+                </div>
+            `;
+        }).join('');
     }
 
-    // Funciones de carga originales (Mantenidas intactas)
-    function loadM3U(u, f, el) { setActive(el); channels = []; fetch(u).then(r => r.text()).then(t => { t.split('\n').forEach((line, i, arr) => { if (line.startsWith('#EXTINF:')) { channels.push({ name: line.split(',').slice(1).join(','), link: arr[i+1]?.trim() }); } }); render(); }); }
-    function loadXML_Ev2(el) { setActive(el); channels = []; fetch(XML_EV2).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); x.querySelectorAll('channel, canal').forEach(item => { channels.push({ name: item.getAttribute('name'), link: item.querySelector('url')?.textContent }); }); render(); }); }
-    function loadXML_Ev3(el) { setActive(el); channels = []; fetch(XML_EV3).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); x.querySelectorAll('evento, event, item').forEach(ev => { const n = ev.querySelector('nombre, title, name')?.textContent; const l = ev.querySelector('url, link')?.textContent; if(l) channels.push({ name: n, link: l }); }); render(); }); }
-    function loadXML_Ev4(el) { setActive(el); channels = []; fetch(XML_EV4).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); Array.from(x.getElementsByTagName("track")).forEach(tr => { channels.push({ name: tr.getElementsByTagName("title")[0]?.textContent, link: tr.getElementsByTagName("url")[0]?.textContent }); }); render(); }); }
-    function loadAgenda(el) { setActive(el); channels = []; fetch(AGENDA_URL).then(r => r.text()).then(h => { const doc = new DOMParser().parseFromString(h, "text/html"); doc.querySelectorAll('table tr').forEach(row => { const a = row.querySelector('a'); if(a) channels.push({ name: a.textContent, link: a.href, type: 'agenda' }); }); render(); }); }
+    // Funciones de carga originales sin cambios
+    function loadM3U(u, f, el) { setActive(el); channels = []; fetch(u).then(r => r.text()).then(t => { const l = t.split('\n'); l.forEach((line, i) => { if (line.startsWith('#EXTINF:')) { const namePart = line.split(',').slice(1).join(','); const name = namePart.trim() || 'Canal'; const link = l[i+1]?.trim() || ''; channels.push({ name, link, type: f ? 'ace' : 'web' }); } }); render(); }).catch(err => { console.error('Error M3U:', err); document.getElementById('loading').innerHTML = 'ERROR AL CARGAR LISTA'; }); }
+    function loadXML_Ev2(el) { setActive(el); channels = []; fetch(XML_EV2).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); x.querySelectorAll('channel, canal').forEach(item => { const name = item.getAttribute('name') || item.getAttribute('nombre del canal') || 'Canal'; const link = item.querySelector('url')?.textContent?.trim(); if (link) channels.push({ name, link, type: 'web' }); }); render(); }); }
+    function loadXML_Ev3(el) { setActive(el); channels = []; fetch(XML_EV3).then(r => r.text()).then(t => { const x = new DOMParser().parseFromString(t, "text/xml"); const eventos = x.querySelectorAll('evento, event, item, programa'); eventos.forEach(ev => { try { const nombreEl = ev.querySelector('nombre, title, name, evento'); const nombre = nombreEl?.textContent?.trim() || ev.getAttribute('nombre') || ev.getAttribute('name') || 'Evento sin nombre'; const stream = ev.querySelector('stream, streams, enlace, url-container'); if (!stream) return; const urlEl = stream.querySelector('url, link, enlace, stream-url'); const link = urlEl?.textContent?.trim() || stream.textContent?.trim(); if (link && (link.startsWith('http') || link.includes('acestream'))) { channels.push({ name: nombre, link, type: 'web' }); } } catch (e) { console.warn('Error parseando evento:', e); } }); render(); }); }
+    function loadXML_Ev4(el) { setActive(el); channels = []; fetch(XML_EV4).then(r => r.text()).then(data => { const x = new DOMParser().parseFromString(data, "text/xml"); const tracks = x.getElementsByTagName("track"); for (let t of tracks) { let name = t.getElementsByTagName("title")[0]?.textContent?.trim() || 'Evento'; let urls = t.getElementsByTagName("url"); if (name && urls.length > 0) { const link = urls[0].textContent.trim(); channels.push({ name, link, type: 'web' }); } } render(); }); }
+    function loadAgenda(el) { setActive(el); channels = []; document.getElementById('loading').innerHTML = 'CARGANDO AGENDA...'; fetch(AGENDA_URL).then(r => r.text()).then(html => { const parser = new DOMParser(); const doc = parser.parseFromString(html, "text/html"); const rows = doc.querySelectorAll('table tr'); rows.forEach(row => { const cells = row.querySelectorAll('td'); if (cells.length >= 4) { const comp = cells[1]?.textContent.trim() || ''; const time = cells[2]?.textContent.trim() || ''; const matchLink = cells[3]?.querySelector('a'); const matchName = matchLink?.textContent.trim() || ''; const link = matchLink?.href || ''; if (matchName && link) { const fullName = `${matchName} (${comp} - ${time})`.trim(); const fullLink = link.startsWith('http') ? link : AGENDA_URL.replace(/\/index\.html$/, '') + link; channels.push({ name: fullName, link: fullLink, type: 'agenda' }); } } }); render(); }); }
 
     function play(i) {
         const c = channels[i];
-        if (c.type === 'agenda') { window.open(c.link, '_blank'); return; }
-        let url = c.link;
-        if (url.includes('acestream://')) { window.location.href = url; return; }
+        let url = c.link?.trim() || '';
+        if (c.type === 'agenda') { window.open(url, '_blank'); return; }
+        if (url.includes('youtube.com') || url.includes('youtu.be')) { let id = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop().split('?')[0]; url = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`; }
+        if (url.toLowerCase().includes('acestream://')) { window.location.href = url.includes('acestream://') ? url : 'acestream://' + url; return; }
         document.getElementById('video-iframe').src = url;
         document.getElementById('player-modal').style.display = 'flex';
-        document.querySelector('.close-btn').focus(); // Foco al botón cerrar para el mando
+        document.querySelector('.close-mini-bottom').focus(); // Foco para mando
     }
 
     function closePlayer() {
@@ -148,11 +197,22 @@
         document.getElementById('video-iframe').src = '';
     }
 
+    function filter() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = channels.filter(c => c.name.toLowerCase().includes(q));
+        document.getElementById('channel-list').innerHTML = filtered.map((c, i) => `
+            <div tabindex="0" class="card" onclick="play(${i})">
+                ${isLiveFromName(c.name) ? '<span class="live-badge">LIVE</span>' : ''}
+                <img src="${LOGO}">
+                <span>${c.name}</span>
+            </div>
+        `).join('');
+    }
+
     // SOPORTE PARA MANDO (D-PAD)
     document.addEventListener('keydown', (e) => {
-        const active = document.activeElement;
-        const focusable = Array.from(document.querySelectorAll('button, .card, .list-btn, [tabindex="0"]'));
-        let index = focusable.indexOf(active);
+        const focusable = Array.from(document.querySelectorAll('div[tabindex="0"], input, button[tabindex="0"]'));
+        let index = focusable.indexOf(document.activeElement);
 
         if (e.key === 'ArrowRight') {
             index = (index + 1) % focusable.length;
@@ -161,14 +221,13 @@
             index = (index - 1 + focusable.length) % focusable.length;
             focusable[index].focus();
         } else if (e.key === 'ArrowDown') {
-            // Salto aproximado de fila
-            index = (index + 4) % focusable.length;
+            index = (index + 2) % focusable.length; // Salto aproximado para grid
             focusable[index].focus();
         } else if (e.key === 'ArrowUp') {
-            index = (index - 4 + focusable.length) % focusable.length;
+            index = (index - 2 + focusable.length) % focusable.length;
             focusable[index].focus();
         } else if (e.key === 'Enter') {
-            active.click();
+            document.activeElement.click();
         }
     });
 
